@@ -53,7 +53,5 @@ By default, outputs junit XML to testreports.xml."
     (eval-in-project
      project
      (second forms) ;; form
-     ;nil ;; handler
-     ;nil ;; skip-auto-compile
      (first forms) ;; init
      )))
