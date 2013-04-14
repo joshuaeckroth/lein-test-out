@@ -29,16 +29,16 @@
                     'clojure.test.tap/with-tap-output
                     'clojure.test.junit/with-junit-output)]
     `(do
-     (try
-      ~(require-all-test-namespaces project)
-      (with-open [file-stream# (java.io.FileWriter. ~filename)]
-        (binding [~'*out* file-stream#
-                  clojure.test/*test-out* file-stream#]
-          (~format-fn (clojure.test/run-all-tests))
-          (catch Throwable e#
-            (clojure.test/is false (format "Uncaught exception: %s" e#))
-            (System/exit 1)))))
-     (System/exit 0))))
+       (try
+         ~(require-all-test-namespaces project)
+         (let [result# (with-open [file-stream# (java.io.FileWriter. ~filename)]
+                         (binding [~'*out* file-stream#
+                                   clojure.test/*test-out* file-stream#]
+                           (~format-fn (clojure.test/run-all-tests))
+                           (catch Throwable e#
+                             (clojure.test/is false (format "Uncaught exception: %s" e#))
+                             (System/exit 1))))]
+           (System/exit (if (clojure.test/successful? result#) 0 1)))))))
 
 (defn test-out
   "runs all tests, and outputs results to a file in junitXML or TAP format.
